@@ -31,4 +31,4 @@ WITH SERDEPROPERTIES (
  "escapeChar" = '\\'
 )
 STORED AS TEXTFILE
-LOCATION '/user/w205/final_project/crime_data';
+LOCATION '/user/w205/crime_data';
