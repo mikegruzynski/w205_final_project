@@ -19,10 +19,6 @@ def buffer(shp_name, dist):
     with fiona.open("./shp/" + shp_name + ".shp", "r") as input:
         schema = input.schema.copy()
         schema['geometry'] = 'Polygon'
-        #keys = schema['properties'].keys()
-        #keystring = ''
-        #for key in keys:
-            #keystring = keystring + "'" + key + "'" + ": point['properties'][" + "'" + key + "'" + "], "
         with fiona.open("./shp/" + shp_name + "_buffer.shp", 'w', 'ESRI Shapefile', schema) as output:
             print 'Buffering ' + shp_name + '...'
             buff_counter = 1
@@ -64,6 +60,7 @@ crime_shp.field("EVENT_GROUP", "C")
 crime_shp.field("EVENT_DATE", "C")
 crime_shp.field("LATITUDE", "C")
 crime_shp.field("LONGITUDE", "C")
+crime_shp.field("STOP_ID", "C") #Null field to accept transit stop id during spatial join
 
 #Counters for checking the total number of records
 transit_counter = 1
@@ -107,6 +104,7 @@ stops_shp.save("./shp/transit_stops")
 
 #Access crime source data in csv format, skipping the headers
 with open('./src/crimes_test.csv', 'rb') as crime_file:
+    crime_stop = None
     crime_read = csv.reader(crime_file, delimiter = ',')
     next(crime_read, None)
 
@@ -129,7 +127,7 @@ with open('./src/crimes_test.csv', 'rb') as crime_file:
 
         #Establish spatial location of point geometry and add attribute data to shapefile
         crime_shp.point(float(x_ft), float(y_ft))
-        crime_shp.record(cad_id, cad_event, offense_num, event_desc, event_subgrp, event_grp, event_date, crime_lat, crime_lon)
+        crime_shp.record(cad_id, cad_event, offense_num, event_desc, event_subgrp, event_grp, event_date, crime_lat, crime_lon, crime_stop)
 
         crime_counter += 1
 
