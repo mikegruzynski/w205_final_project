@@ -1,0 +1,10 @@
+import psycopg2
+
+conn = psycopg2.connect(database="final_project_w205", user="postgres", password="pass", host="localhost", port="5432")
+cur = conn.cursor()
+
+
+cur.execute("""SELECT * FROM bus_route_stop_seattle""")
+a = cur.fetchall()
+print(a)
+~
