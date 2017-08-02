@@ -1,5 +1,11 @@
-from pyspark.sql.types import *
 import csv
+
+from pyspark.sql.types import *
+from pyspark.sql import SQLContext
+from pyspark import SparkContext
+
+sc =SparkContext()
+sqlContext = SQLContext(sc)
 
 # Creates an RDD based on the .csv of crime data, removes header line
 crime_data_raw = sc.textFile("crime_data/SeattleCrimeData.csv")
