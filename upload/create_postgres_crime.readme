@@ -1,0 +1,19 @@
+The postgres crime is a sql file that will create a table called "seattle_crime_raw" that has the .csv 911 data.
+This data has not yet been cleaned.
+
+To run the file, you can do:
+
+psql -d <database> -f create_postgres_crime.sql
+
+Here's a sample run into my local postgres database "crime".
+
+psql -d crime -f create_postgres_crime.sql
+DROP TABLE
+CREATE TABLE
+COPY 1403027
+
+Notes:
+- I used w205 user which I added SUPERUSER privileges to, however, any user with LOGIN, CREATE TABLE rights in that database
+  should work
+- This assumes the raw file is "/tmp/SeattleCrimeData.csv". I was having issues with postgres access on the file even after
+  making it 777 and owned by "w205:w205", so put it in tmp to bypass any directory issues (which I suspected).
