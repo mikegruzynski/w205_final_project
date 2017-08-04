@@ -13,15 +13,15 @@ create table seattle_crime_raw (
  district_sector             varchar(100),
  zonebeat                   varchar(100),
  census_tract                varchar(100),
- latitude                    float,
- longitude                   float,
+ longitude                    float,
+ latitude                   float,
  incident_location                     varchar(100),
  initial_type_description           varchar(500),
  initial_type_subgroup             varchar(100),
  initial_type_group                    varchar(100),
  at_scene_time                         timestamp);
 
-COPY seattle_crime_raw FROM '/tmp/SeattleCrimeData.csv' CSV HEADER QUOTE '"';
+COPY seattle_crime_raw FROM '/data/final_project/clean_data/crime/Seattle_Police_Department_911_Incident_Response_noH.txt' CSV HEADER QUOTE '"';
 
 drop table seattle_crime;
 
@@ -39,8 +39,8 @@ CREATE TABLE seattle_crime
           incident_location,
           initial_type_description,
           coalesce(initial_type_group, event_clearance_group)            AS initial_type_group,
-          latitude,
           longitude,
+          latitude,
           zonebeat,
           substring(cast(coalesce(at_scene_time, event_clearance_date)  as text) from 7 for 4)    AS at_scene_year,
           substring(cast(coalesce(at_scene_time, event_clearance_date) as text) from 1 for 2)    AS at_scene_month,
@@ -56,7 +56,7 @@ CREATE TABLE seattle_crime
           coalesce(event_clearance_date, at_scene_time)                  AS event_clearance_date_time,
           CASE
             WHEN coalesce(event_clearance_group, initial_type_group) IN
-                          ('THREATS, HARASSMENT', 'ROBBERY', 'ASSAULTS', 'DRIVE BY (NO INJURY)') 
+                          ('THREATS, HARASSMENT', 'ROBBERY', 'ASSAULTS', 'DRIVE BY (NO INJURY)')
                  THEN TRUE
            ELSE FALSE
            END AS is_violent,
@@ -72,4 +72,3 @@ CREATE TABLE seattle_crime
         FROM seattle_crime_raw
 WHERE coalesce(event_clearance_group, initial_type_group) NOT IN ('FRAUD CALLS', 'FALSE ALARMS')
         ;
-
