@@ -46,14 +46,51 @@ CREATE TABLE seattle_crime
           substring(cast(coalesce(at_scene_time, event_clearance_date) as text) from 1 for 2)    AS at_scene_month,
           substring(cast(coalesce(at_scene_time, event_clearance_date) as text) from 4 for 2)    AS at_scene_day,
           substring(cast(coalesce(at_scene_time, event_clearance_date) as text) from 13)      AS at_scene_time,
-          substring(cast(coalesce(at_scene_time, event_clearance_date) as text) from -2 for 2)   AS at_scene_am_pm,
           coalesce(at_scene_time, event_clearance_date)                  AS at_scene_date_time,
           substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from  7  for 4)    AS event_clearance_year,
           substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from  1  for 2)    AS event_clearance_month,
           substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from 4  for 2)    AS event_clearance_day,
-          substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from  13)      AS event_clearance_time,
-          substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from  -2 for 2)   AS event_clearance_am_pm,
+          substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from  12)      AS event_clearance_time,
           coalesce(event_clearance_date, at_scene_time)                  AS event_clearance_date_time,
+          CASE
+            WHEN 
+              cast(substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from 12 for 2) as int) 
+              BETWEEN 4 AND 8
+             THEN 'EARLY_MORNING'
+            WHEN 
+              cast(substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from 12 for 2) as int)
+              BETWEEN 9 AND 12
+            THEN 'LATE_MORNING'
+            WHEN
+              cast(substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from 12 for 2) as int)
+              BETWEEN 13 AND 15
+            THEN 'EARLY_AFTERNOON'
+            WHEN
+              cast(substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from 12 for 2) as int)
+              BETWEEN 16 AND 18
+            THEN 'LATE_AFTERNOON'
+            WHEN
+              cast(substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from 12 for 2) as int)
+              BETWEEN 19 AND 21
+            THEN 'EVENING'  
+            ELSE 'NIGHT'
+         END AS time_bucket,
+         CASE
+           WHEN event_clearance_group IN ('ASSAULTS', 'HOMICIDE')
+           THEN 'CRIMINAL_MAJOR'
+           WHEN event_clearance_group IN ('HARBOR CALLS', 'PROWLER', 'THREATS, HARASSMENT')
+           THEN 'CRIMINAL_MINOR'
+           WHEN event_clearance_group IN ('ANIMAL COMPLAINTS', 'CAR PROWL', 'DISTURBANCES', 'DRIVE BY (NO INJURY)','HAZARDS', 'LEWD CONDUCT', 'LIQUOR VIOLATIONS', 'MENTAL HEALTH', 'NARCOTIC COMPLAIN
+TS', 'NUISANCE, MISCHIEF', 'OTHER VICE', 'PERSON DOWN/INJURY', 'PROSTITUTION', 'SUSPICIOUS CIRCUMSTANCES', 'VICE CALLS', 'WEAPONS CALLS')
+           THEN 'DISTURBANCE'
+           WHEN event_clearance_group IN ('FALSE ALARMS', 'FRAUD CALLS')
+           THEN 'FALSE_REPORTING'
+           WHEN event_clearance_group IN ('AUTO THEFTS', 'BURGLARY', 'PROPERTY DAMAGE', 'TRESPASS')
+           THEN 'PROPERTY_MAJOR'
+           WHEN event_clearance_group IN ('ACCIDENT INVESTIGATION', 'BIKE', 'OTHER PROPERTY', 'PROPERTY - MISSING, FOUND', 'RECKLESS BURNING', 'SHOPLIFTING','MOTOR VEHICLE COLLISION INVESTIGATION')
+           THEN 'PROPERTY_MINOR'
+           ELSE 'OTHER'
+          END AS crime_type,
           CASE
             WHEN coalesce(event_clearance_group, initial_type_group) IN
                           ('THREATS, HARASSMENT', 'ROBBERY', 'ASSAULTS', 'DRIVE BY (NO INJURY)')
