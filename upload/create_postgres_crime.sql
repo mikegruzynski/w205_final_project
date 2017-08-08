@@ -45,7 +45,7 @@ CREATE TABLE seattle_crime
           substring(cast(coalesce(at_scene_time, event_clearance_date)  as text) from 7 for 4)    AS at_scene_year,
           substring(cast(coalesce(at_scene_time, event_clearance_date) as text) from 1 for 2)    AS at_scene_month,
           substring(cast(coalesce(at_scene_time, event_clearance_date) as text) from 4 for 2)    AS at_scene_day,
-          substring(cast(coalesce(at_scene_time, event_clearance_date) as text) from 13)      AS at_scene_time,
+          substring(cast(coalesce(at_scene_time, event_clearance_date) as text) from 12)      AS at_scene_time,
           coalesce(at_scene_time, event_clearance_date)                  AS at_scene_date_time,
           substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from  7  for 4)    AS event_clearance_year,
           substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from  1  for 2)    AS event_clearance_month,
