@@ -76,19 +76,20 @@ CREATE TABLE seattle_crime
             ELSE 'NIGHT'
          END AS time_bucket,
          CASE
-           WHEN event_clearance_group IN ('ASSAULTS', 'HOMICIDE')
-           THEN 'CRIMINAL_MAJOR'
-           WHEN event_clearance_group IN ('HARBOR CALLS', 'PROWLER', 'THREATS, HARASSMENT')
-           THEN 'CRIMINAL_MINOR'
-           WHEN event_clearance_group IN ('ANIMAL COMPLAINTS', 'CAR PROWL', 'DISTURBANCES', 'DRIVE BY (NO INJURY)','HAZARDS', 'LEWD CONDUCT', 'LIQUOR VIOLATIONS', 'MENTAL HEALTH', 'NARCOTIC COMPLAIN
-TS', 'NUISANCE, MISCHIEF', 'OTHER VICE', 'PERSON DOWN/INJURY', 'PROSTITUTION', 'SUSPICIOUS CIRCUMSTANCES', 'VICE CALLS', 'WEAPONS CALLS')
-           THEN 'DISTURBANCE'
-           WHEN event_clearance_group IN ('FALSE ALARMS', 'FRAUD CALLS')
-           THEN 'FALSE_REPORTING'
-           WHEN event_clearance_group IN ('AUTO THEFTS', 'BURGLARY', 'PROPERTY DAMAGE', 'TRESPASS')
-           THEN 'PROPERTY_MAJOR'
-           WHEN event_clearance_group IN ('ACCIDENT INVESTIGATION', 'BIKE', 'OTHER PROPERTY', 'PROPERTY - MISSING, FOUND', 'RECKLESS BURNING', 'SHOPLIFTING','MOTOR VEHICLE COLLISION INVESTIGATION')
-           THEN 'PROPERTY_MINOR'
+           WHEN event_clearance_group IN ('BIKE', 'BURGLARY', 'SHOPLIFTING', 'AUTO THEFTS', 'ROBBERY', 'OTHER PROPERTY')
+           THEN 'THEFT'
+           WHEN event_clearance_group IN ('ARREST', 'TRESPASS', 'RECKLESS BURNING', 'NUISANCE, MISCHIEF', 'PROPERTY DAMAGE', 'DISTURBANCES', 'PROPERTY - MISSING, FOUND', 'PUBLIC GATHERINGS', 'HAZARDS', 'MISCELLANEOUS MISDEMEANORS', 'ANIMAL COMPLAINTS','NUISANCE, MISCHIEF')
+           THEN 'LIGHT CRIME'
+           WHEN event_clearance_group IN ('ASSAULTS', 'HOMICIDE', 'DRIVE BY (NO INJURY)')
+           THEN 'HEAVY CRIME'
+           WHEN event_clearance_group IN ('FALSE ALARMS', 'FRAUD CALLS', 'FALSE ALACAD')
+           THEN 'FALSE ALARMS'
+           WHEN event_clearance_group IN ('LEWD CONDUCT', 'LIQUOR VIOLATIONS', 'OTHER VICE', 'VICE CALLS', 'PROSTITUTION','FAILURE TO REGISTER (SEX OFFENDER)','NARCOTICS COMPLAINTS','MOTOR VEHICLE COLLISION INVESTIGATION')
+           THEN 'VICE'
+           WHEN event_clearance_group IN ('TRAFFIC RELATED CALLS', 'ACCIDENT INVESTIGATION', 'HARBOR CALLS')
+           THEN 'VEHICLE'
+           WHEN event_clearance_group IN ('PERSON DOWN/INJURY', 'WEAPONS CALLS', 'BEHAVIORAL HEALTH', 'THREATS, HARASSMENT', 'PERSONS - LOST, FOUND, MISSING','PROWLER', 'CAR PROWL', 'MENTAL HEALTH', 'SUSPICIOUS CIRCUMSTANCES') 
+           THEN 'POSSIBLE CRIME'
            ELSE 'OTHER'
           END AS crime_type,
           CASE
@@ -107,5 +108,5 @@ TS', 'NUISANCE, MISCHIEF', 'OTHER VICE', 'PERSON DOWN/INJURY', 'PROSTITUTION', '
           coalesce(event_clearance_group, initial_type_group)             AS event_clearance_group,
           event_clearance_subgroup                                   AS event_clearance_subgroup
         FROM seattle_crime_raw
-WHERE coalesce(event_clearance_group, initial_type_group) NOT IN ('FRAUD CALLS', 'FALSE ALARMS')
+WHERE coalesce(event_clearance_group, initial_type_group) NOT IN ('FRAUD CALLS', 'FALSE ALARMS', 'FALSE ALACAD')
         ;
