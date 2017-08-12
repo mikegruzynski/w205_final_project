@@ -21,7 +21,7 @@ create table seattle_crime_raw (
  initial_type_group                    varchar(100),
  at_scene_time                         timestamp);
 
-COPY seattle_crime_raw FROM '/data/final_project/clean_data/crime/Seattle_Police_Department_911_Incident_Response_noH.txt' CSV HEADER QUOTE '"';
+COPY seattle_crime_raw FROM '/tmp/SeattleCrimeData.csv' CSV HEADER QUOTE '"';
 
 drop table seattle_crime;
 
