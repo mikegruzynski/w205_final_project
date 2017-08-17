@@ -47,6 +47,8 @@ CREATE TABLE seattle_crime
           substring(cast(coalesce(at_scene_time, event_clearance_date) as text) from 9 for 2)    AS at_scene_day,
           substring(cast(coalesce(at_scene_time, event_clearance_date) as text) from 12)      AS at_scene_time,
           coalesce(at_scene_time, event_clearance_date)                  AS at_scene_date_time,
+          to_char(coalesce(at_scene_time, event_clearance_date), 'day') AS day_name,
+          to_char(coalesce(at_scene_time, event_clearance_date), 'd') AS day_number,
           substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from  1  for 4)    AS event_clearance_year,
           substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from  6  for 2)    AS event_clearance_month,
           substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from 9  for 2)    AS event_clearance_day,
@@ -75,6 +77,29 @@ CREATE TABLE seattle_crime
             THEN 'EVENING'  
             ELSE 'NIGHT'
          END AS time_bucket,
+         CASE
+            WHEN 
+              cast(substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from 12 for 2) as int) 
+              BETWEEN 4 AND 8
+             THEN '1_EARLY_MORNING'
+            WHEN 
+              cast(substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from 12 for 2) as int)
+              BETWEEN 9 AND 12
+            THEN '2_LATE_MORNING'
+            WHEN
+              cast(substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from 12 for 2) as int)
+              BETWEEN 13 AND 15
+            THEN '3_EARLY_AFTERNOON'
+            WHEN
+              cast(substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from 12 for 2) as int)
+              BETWEEN 16 AND 18
+            THEN '4_LATE_AFTERNOON'
+            WHEN
+              cast(substring(cast(coalesce(event_clearance_date, at_scene_time) as text) from 12 for 2) as int)
+              BETWEEN 19 AND 21
+            THEN '5_EVENING'  
+            ELSE '6_NIGHT'
+         END AS time_bucket_sort,
          CASE
            WHEN event_clearance_group IN ('BIKE', 'BURGLARY', 'SHOPLIFTING', 'AUTO THEFTS', 'ROBBERY', 'OTHER PROPERTY')
            THEN 'THEFT'
