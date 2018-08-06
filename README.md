@@ -1,4 +1,5 @@
 # w205_final_project
+https://sites.google.com/s/0B6PWth7pPGaLRW1tYUFNZmNRaFk/p/0B6PWth7pPGaLSFdLYWdxdmhSMTg/edit?pli=1&authuser=1
 STEP BY STEP:
 1. Log into AWS and Launch New Instance
     - Go To Community AMI and search for UCB W205 SPRING 2016
